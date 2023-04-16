@@ -7,6 +7,7 @@ import {
   View,
   ScrollView,
   FlatList,
+  TextInput,
 } from 'react-native';
 
 import { api } from '../../services/api';
@@ -16,10 +17,12 @@ import colors from 'tailwindcss/colors';
 
 import {
   containerMovie,
+  containerSearch,
   containerStyle,
   contentStyle,
   posterMovie,
   rowButtons,
+  searchStyle,
   svgStyle,
   textStyle,
   titleStyle,
@@ -114,6 +117,14 @@ const Home = () => {
         <ActivityIndicator size="large" color={colors.white[900]} />
       ) : (
         <View className={contentStyle}>
+          <View>
+            <Text className={titleStyle}>FiluFLIX</Text>
+          </View>
+
+          <View className={containerSearch}>
+            <TextInput className={searchStyle} />
+          </View>
+
           <Text className={titleStyle}>Último lançamento</Text>
           <View className={containerMovie}>
             <TouchableOpacity>
@@ -136,7 +147,7 @@ const Home = () => {
                 <Svg height="60" width="200" className={svgStyle}>
                   <TextSvg
                     fill="black"
-                    stroke="purple"
+                    stroke="white"
                     fontSize="80"
                     fontWeight="bold"
                     x="50"
@@ -187,7 +198,7 @@ const Home = () => {
                 <Svg height="60" width="200" className={svgStyle}>
                   <TextSvg
                     fill="black"
-                    stroke="purple"
+                    stroke="white"
                     fontSize="80"
                     fontWeight="bold"
                     x="50"

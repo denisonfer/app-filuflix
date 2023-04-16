@@ -1,10 +1,14 @@
-import { borderOfEdition, row } from '../../styles/global';
+import { white } from 'tailwindcss/colors';
+import { borderOfEdition, borderWhite, row } from '../../styles/global';
 
 export const containerStyle = 'bg-black-900 p-5';
 
 export const contentStyle = 'flex-1';
 
 export const titleStyle = 'text-2xl font-bold text-white-900 mb-2 mt-4';
+
+export const containerSearch = `${borderWhite} p-2 rounded-lg`;
+export const searchStyle = 'text-white-900';
 
 export const containerMovie = 'relative w-36 h-52 rounded-lg mr-6 p-2';
 export const svgStyle = 'absolute z-10 bottom-0 -left-2';
