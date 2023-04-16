@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -20,9 +20,12 @@ import {
   contentStyle,
   posterMovie,
   rowButtons,
+  svgStyle,
   textStyle,
   titleStyle,
 } from './styles';
+
+import { Svg, Text as TextSvg } from 'react-native-svg';
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -35,7 +38,7 @@ const Home = () => {
           `movie/top_rated?${keyMoviesApi}&language=pt-BR`,
         );
 
-        setTopMovies(data.results);
+        setTopMovies(data.results.slice(0, 10));
         setLoading(false);
       } catch (error) {
         console.tron.log(
@@ -57,20 +60,35 @@ const Home = () => {
         <ActivityIndicator size="large" color={colors.white[900]} />
       ) : (
         <View className={contentStyle}>
-          <Text className={titleStyle}>Filme mais votados</Text>
+          <Text className={titleStyle}>Top 10 do público</Text>
           <FlatList
             data={topMovies}
             keyExtractor={movie => String(movie.id)}
             horizontal
-            renderItem={({ item: movie }) => (
-              <TouchableOpacity className={containerMovie}>
-                <Image
-                  className={posterMovie}
-                  resizeMode="cover"
-                  resizeMethod="auto"
-                  source={{ uri: `${ulrImages}${movie.poster_path}` }}
-                />
-              </TouchableOpacity>
+            renderItem={({ item: movie, index }) => (
+              <View className={containerMovie}>
+                <Svg height="60" width="200" className={svgStyle}>
+                  <TextSvg
+                    fill="black"
+                    stroke="purple"
+                    fontSize="80"
+                    fontWeight="bold"
+                    x="50"
+                    y="60"
+                    textAnchor="middle"
+                  >
+                    {index + 1}
+                  </TextSvg>
+                </Svg>
+                <TouchableOpacity>
+                  <Image
+                    className={posterMovie}
+                    resizeMode="cover"
+                    resizeMethod="auto"
+                    source={{ uri: `${ulrImages}${movie.poster_path}` }}
+                  />
+                </TouchableOpacity>
+              </View>
             )}
           />
         </View>
