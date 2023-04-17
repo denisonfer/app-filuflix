@@ -26,6 +26,7 @@ import {
   containerSearch,
   containerStyle,
   contentStyle,
+  logoStyle,
   posterMovie,
   rowButtons,
   searchStyle,
@@ -142,11 +143,15 @@ const Home = () => {
       ) : (
         <View className={contentStyle}>
           <View>
-            <Text className={titleStyle}>FiluFLIX</Text>
+            <Text className={logoStyle}>FiluFLIX</Text>
           </View>
 
           <View className={containerSearch}>
-            <TextInput className={searchStyle} />
+            <TextInput
+              className={searchStyle}
+              placeholder="Buscar filme"
+              placeholderTextColor={colors.gray[300]}
+            />
           </View>
 
           <FlatList

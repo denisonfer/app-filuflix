@@ -5,6 +5,8 @@ export const containerStyle = 'bg-black-900 p-5';
 
 export const contentStyle = 'flex-1';
 
+export const logoStyle = 'text-4xl font-bold text-white-900 mb-4 mt-4';
+
 export const titleStyle = 'text-2xl font-bold text-white-900 mb-2 mt-4';
 
 export const containerSearch = 'bg-gray-900 pl-2 rounded-lg mb-4';
