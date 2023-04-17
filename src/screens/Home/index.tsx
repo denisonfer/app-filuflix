@@ -12,10 +12,16 @@ import {
 
 import { api } from '../../services/api';
 import { keyMoviesApi, ulrImages } from '../../configs/configs';
-import { IGetTopRatedMovies, IMovie } from './types';
+import {
+  IGenre,
+  IGetTopRatedMovies,
+  IMovie,
+  IResponseGetGenres,
+} from './types';
 import colors from 'tailwindcss/colors';
 
 import {
+  buttonGenderStyle,
   containerMovie,
   containerSearch,
   containerStyle,
@@ -24,6 +30,7 @@ import {
   rowButtons,
   searchStyle,
   svgStyle,
+  textButtonGenderStyle,
   textStyle,
   titleStyle,
 } from './styles';
@@ -36,6 +43,7 @@ const Home = () => {
   const [topWhatAreWatching, setTopWhatAreWatching] = useState<IMovie[]>([]);
   const [topLatest, setTopLatest] = useState<IMovie>({} as IMovie);
   const [upcoming, setUpcoming] = useState<IMovie[]>([]);
+  const [genresList, setGenresList] = useState<IGenre[]>([]);
 
   useEffect(() => {
     async function loadTopMovies() {
@@ -102,6 +110,22 @@ const Home = () => {
       }
     }
 
+    async function getGenres() {
+      try {
+        const { data } = await api.get<IResponseGetGenres>(
+          `/genre/movie/list?${keyMoviesApi}&language=pt-BR`,
+        );
+        setGenresList(data.genres);
+        setLoading(false);
+      } catch (error) {
+        console.tron.log(
+          '[ERROR] - getGenres ====================================',
+          error,
+        );
+      }
+    }
+
+    getGenres();
     loadTopMovies();
     loadWhatAreWatching();
     loadTopLatest();
@@ -124,6 +148,18 @@ const Home = () => {
           <View className={containerSearch}>
             <TextInput className={searchStyle} />
           </View>
+
+          <FlatList
+            data={genresList}
+            keyExtractor={genre => String(genre.id)}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item: gender }) => (
+              <TouchableOpacity className={buttonGenderStyle}>
+                <Text className={textButtonGenderStyle}>{gender.name}</Text>
+              </TouchableOpacity>
+            )}
+          />
 
           <Text className={titleStyle}>Último lançamento</Text>
           <View className={containerMovie}>
