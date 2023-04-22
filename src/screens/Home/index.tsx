@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -8,6 +8,8 @@ import {
   ScrollView,
   FlatList,
   TextInput,
+  StatusBar,
+  SafeAreaView,
 } from 'react-native';
 
 import { api } from '../../services/api';
@@ -28,17 +30,16 @@ import {
   contentStyle,
   logoStyle,
   posterMovie,
-  rowButtons,
+  safeAreaStyle,
   searchStyle,
   svgStyle,
   textButtonGenderStyle,
-  textStyle,
   titleStyle,
 } from './styles';
 
 import { Svg, Text as TextSvg } from 'react-native-svg';
 
-const Home = () => {
+const HomeScreen = () => {
   const [loading, setLoading] = useState(true);
   const [topMovies, setTopMovies] = useState<IMovie[]>([]);
   const [topWhatAreWatching, setTopWhatAreWatching] = useState<IMovie[]>([]);
@@ -56,7 +57,7 @@ const Home = () => {
         setTopMovies(data.results.slice(0, 10));
         setLoading(false);
       } catch (error) {
-        console.tron.log(
+        console.tron?.log?.(
           '[ERROR] - loadTopMovies ====================================',
           error,
         );
@@ -72,7 +73,7 @@ const Home = () => {
         setTopWhatAreWatching(data.results.slice(0, 10));
         setLoading(false);
       } catch (error) {
-        console.tron.log(
+        console.tron?.log?.(
           '[ERROR] - loadWhatAreWatching ====================================',
           error,
         );
@@ -88,7 +89,7 @@ const Home = () => {
         setTopLatest(data);
         setLoading(false);
       } catch (error) {
-        console.tron.log(
+        console.tron?.log?.(
           '[ERROR] - loadTopLatest ====================================',
           error,
         );
@@ -104,7 +105,7 @@ const Home = () => {
         setUpcoming(data.results.slice(0, 10));
         setLoading(false);
       } catch (error) {
-        console.tron.log(
+        console.tron?.log?.(
           '[ERROR] - loadUpcoming ====================================',
           error,
         );
@@ -119,7 +120,7 @@ const Home = () => {
         setGenresList(data.genres);
         setLoading(false);
       } catch (error) {
-        console.tron.log(
+        console.tron?.log?.(
           '[ERROR] - getGenres ====================================',
           error,
         );
@@ -134,136 +135,139 @@ const Home = () => {
   }, []);
 
   return (
-    <ScrollView
-      className={containerStyle}
-      contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}
-    >
-      {loading ? (
-        <ActivityIndicator size="large" color={colors.white[900]} />
-      ) : (
-        <View className={contentStyle}>
-          <View>
-            <Text className={logoStyle}>FiluFLIX</Text>
-          </View>
+    <SafeAreaView className={safeAreaStyle}>
+      <ScrollView
+        className={containerStyle}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}
+      >
+        <StatusBar barStyle="light-content" />
+        {loading ? (
+          <ActivityIndicator size="large" color={colors.white[900]} />
+        ) : (
+          <View className={contentStyle}>
+            <View>
+              <Text className={logoStyle}>FiluFLIX</Text>
+            </View>
 
-          <View className={containerSearch}>
-            <TextInput
-              className={searchStyle}
-              placeholder="Buscar filme"
-              placeholderTextColor={colors.gray[300]}
+            <View className={containerSearch}>
+              <TextInput
+                className={searchStyle}
+                placeholder="Buscar filme"
+                placeholderTextColor={colors.gray[300]}
+              />
+            </View>
+
+            <FlatList
+              data={genresList}
+              keyExtractor={genre => String(genre.id)}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item: gender }) => (
+                <TouchableOpacity className={buttonGenderStyle}>
+                  <Text className={textButtonGenderStyle}>{gender.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
+
+            <Text className={titleStyle}>Último lançamento</Text>
+            <View className={containerMovie}>
+              <TouchableOpacity>
+                <Image
+                  className={posterMovie}
+                  resizeMode="cover"
+                  resizeMethod="auto"
+                  source={{ uri: `${ulrImages}${topLatest.poster_path}` }}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <Text className={titleStyle}>Top 10 do público</Text>
+            <FlatList
+              data={topMovies}
+              keyExtractor={movie => String(movie.id)}
+              horizontal
+              renderItem={({ item: movie, index }) => (
+                <View className={containerMovie}>
+                  <Svg height="60" width="200" className={svgStyle}>
+                    <TextSvg
+                      fill="black"
+                      stroke="white"
+                      fontSize="80"
+                      fontWeight="bold"
+                      x="50"
+                      y="60"
+                      textAnchor="middle"
+                    >
+                      {index + 1}
+                    </TextSvg>
+                  </Svg>
+                  <TouchableOpacity>
+                    <Image
+                      className={posterMovie}
+                      resizeMode="cover"
+                      resizeMethod="auto"
+                      source={{ uri: `${ulrImages}${movie.poster_path}` }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+
+            <Text className={titleStyle}>Em breve</Text>
+            <FlatList
+              data={upcoming}
+              keyExtractor={movie => String(movie.id)}
+              horizontal
+              renderItem={({ item: movie }) => (
+                <View className={containerMovie}>
+                  <TouchableOpacity>
+                    <Image
+                      className={posterMovie}
+                      resizeMode="cover"
+                      resizeMethod="auto"
+                      source={{ uri: `${ulrImages}${movie.poster_path}` }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+
+            <Text className={titleStyle}>Top 10 o que estão assistindo</Text>
+            <FlatList
+              data={topWhatAreWatching}
+              keyExtractor={movie => String(movie.id)}
+              horizontal
+              renderItem={({ item: movie, index }) => (
+                <View className={containerMovie}>
+                  <Svg height="60" width="200" className={svgStyle}>
+                    <TextSvg
+                      fill="black"
+                      stroke="white"
+                      fontSize="80"
+                      fontWeight="bold"
+                      x="50"
+                      y="60"
+                      textAnchor="middle"
+                    >
+                      {index + 1}
+                    </TextSvg>
+                  </Svg>
+                  <TouchableOpacity>
+                    <Image
+                      className={posterMovie}
+                      resizeMode="cover"
+                      resizeMethod="auto"
+                      source={{ uri: `${ulrImages}${movie.poster_path}` }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
             />
           </View>
-
-          <FlatList
-            data={genresList}
-            keyExtractor={genre => String(genre.id)}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item: gender }) => (
-              <TouchableOpacity className={buttonGenderStyle}>
-                <Text className={textButtonGenderStyle}>{gender.name}</Text>
-              </TouchableOpacity>
-            )}
-          />
-
-          <Text className={titleStyle}>Último lançamento</Text>
-          <View className={containerMovie}>
-            <TouchableOpacity>
-              <Image
-                className={posterMovie}
-                resizeMode="cover"
-                resizeMethod="auto"
-                source={{ uri: `${ulrImages}${topLatest.poster_path}` }}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <Text className={titleStyle}>Top 10 do público</Text>
-          <FlatList
-            data={topMovies}
-            keyExtractor={movie => String(movie.id)}
-            horizontal
-            renderItem={({ item: movie, index }) => (
-              <View className={containerMovie}>
-                <Svg height="60" width="200" className={svgStyle}>
-                  <TextSvg
-                    fill="black"
-                    stroke="white"
-                    fontSize="80"
-                    fontWeight="bold"
-                    x="50"
-                    y="60"
-                    textAnchor="middle"
-                  >
-                    {index + 1}
-                  </TextSvg>
-                </Svg>
-                <TouchableOpacity>
-                  <Image
-                    className={posterMovie}
-                    resizeMode="cover"
-                    resizeMethod="auto"
-                    source={{ uri: `${ulrImages}${movie.poster_path}` }}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-          />
-
-          <Text className={titleStyle}>Em breve</Text>
-          <FlatList
-            data={upcoming}
-            keyExtractor={movie => String(movie.id)}
-            horizontal
-            renderItem={({ item: movie }) => (
-              <View className={containerMovie}>
-                <TouchableOpacity>
-                  <Image
-                    className={posterMovie}
-                    resizeMode="cover"
-                    resizeMethod="auto"
-                    source={{ uri: `${ulrImages}${movie.poster_path}` }}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-          />
-
-          <Text className={titleStyle}>Top 10 o que estão assistindo</Text>
-          <FlatList
-            data={topWhatAreWatching}
-            keyExtractor={movie => String(movie.id)}
-            horizontal
-            renderItem={({ item: movie, index }) => (
-              <View className={containerMovie}>
-                <Svg height="60" width="200" className={svgStyle}>
-                  <TextSvg
-                    fill="black"
-                    stroke="white"
-                    fontSize="80"
-                    fontWeight="bold"
-                    x="50"
-                    y="60"
-                    textAnchor="middle"
-                  >
-                    {index + 1}
-                  </TextSvg>
-                </Svg>
-                <TouchableOpacity>
-                  <Image
-                    className={posterMovie}
-                    resizeMode="cover"
-                    resizeMethod="auto"
-                    source={{ uri: `${ulrImages}${movie.poster_path}` }}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-          />
-        </View>
-      )}
-    </ScrollView>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-export default Home;
+export default HomeScreen;

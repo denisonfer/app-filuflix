@@ -1,39 +1,37 @@
-// @ts-nocheck
 import { NativeModules, Platform } from 'react-native';
-import Reactotron from 'reactotron-react-native';
+import Reactotron, { asyncStorage } from 'reactotron-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CustomCommand } from 'reactotron-core-client';
 
-//import AsyncStorage from '@react-native-async-storage/async-storage';
-//import courseService from '../Services/course';
+const showStorageDataCommand: CustomCommand = {
+  command: 'showStorageData',
+  description: 'Mostra todos os dados salvos no AsyncStorage da aplicação',
+  handler: async () => {
+    try {
+      const allKeys = await AsyncStorage.getAllKeys();
+      const allData = await AsyncStorage.multiGet(allKeys);
+      console.tron?.log?.('Dados salvos no AsyncStorage:', allData);
+    } catch (error) {
+      console.tron?.log?.('Erro ao mostrar os dados do AsyncStorage:', error);
+    }
+  },
+};
 
 let scriptHostname;
 
 if (__DEV__) {
-  //Put here the emulator IP printed on terminal
   const emulatorIP = '10.0.2.2';
 
   const { scriptURL } = NativeModules.SourceCode;
   scriptHostname = scriptURL.split('://')[1].split(':')[0];
 
-  const tron = Reactotron.configure({
+  Reactotron.configure({
     host: Platform.OS === 'ios' ? scriptHostname : emulatorIP,
   })
     .useReactNative()
+    .use(asyncStorage({}))
     .connect();
 
-  console.tron = tron;
-
-  /* console.tron.onCustomCommand('show_asyncStorage', () => {
-    AsyncStorage.getAllKeys((err, keys) => {
-      AsyncStorage.multiGet(keys, (error, stores) => {
-        stores?.map((result, i, store) => {
-          console.tron.log({[store[i][0]]: JSON.parse(store[i][1])});
-          return true;
-        });
-      });
-    });
-  }); */
-
-  /* console.tron.onCustomCommand('get_current_course_modules', () => {
-    console.tron.log(courseService.getCurrentCourseModules());
-  }); */
+  Reactotron.onCustomCommand(showStorageDataCommand);
+  console.tron = Reactotron;
 }

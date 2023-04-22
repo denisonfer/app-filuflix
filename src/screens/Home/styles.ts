@@ -1,6 +1,8 @@
 import { white } from 'tailwindcss/colors';
 import { borderOfEdition, borderWhite, row } from '../../styles/global';
 
+export const safeAreaStyle = 'flex-1 bg-black-900';
+
 export const containerStyle = 'bg-black-900 p-5';
 
 export const contentStyle = 'flex-1';
@@ -10,7 +12,7 @@ export const logoStyle = 'text-4xl font-bold text-white-900 mb-4 mt-4';
 export const titleStyle = 'text-2xl font-bold text-white-900 mb-2 mt-4';
 
 export const containerSearch = 'bg-gray-900 pl-2 rounded-lg mb-4';
-export const searchStyle = 'text-white-900';
+export const searchStyle = 'text-white-900 h-10';
 
 export const buttonGenderStyle = 'bg-violet-950 rounded-full mr-2.5 px-2 py-1';
 export const textButtonGenderStyle = 'text-white-900';
