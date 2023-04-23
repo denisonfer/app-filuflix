@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -11,6 +11,8 @@ import {
   StatusBar,
   SafeAreaView,
 } from 'react-native';
+
+import { useNavigation } from '@react-navigation/native';
 
 import { api } from '../../services/api';
 import { keyMoviesApi, ulrImages } from '../../configs/configs';
@@ -38,8 +40,11 @@ import {
 } from './styles';
 
 import { Svg, Text as TextSvg } from 'react-native-svg';
+import { PropsStackScreens } from '../../routes';
+import { SharedElement } from 'react-navigation-shared-element';
 
 const HomeScreen = () => {
+  const { navigate } = useNavigation<PropsStackScreens>();
   const [loading, setLoading] = useState(true);
   const [topMovies, setTopMovies] = useState<IMovie[]>([]);
   const [topWhatAreWatching, setTopWhatAreWatching] = useState<IMovie[]>([]);
@@ -134,6 +139,18 @@ const HomeScreen = () => {
     loadUpcoming();
   }, []);
 
+  const handleNavigateToDetail = useCallback(
+    (movie: IMovie) => {
+      navigate('DetailMovieScreen', {
+        movieId: movie.id,
+        title: movie.title,
+        image: ulrImages + movie.poster_path,
+        overview: movie.overview,
+      });
+    },
+    [navigate],
+  );
+
   return (
     <SafeAreaView className={safeAreaStyle}>
       <ScrollView
@@ -201,13 +218,17 @@ const HomeScreen = () => {
                       {index + 1}
                     </TextSvg>
                   </Svg>
-                  <TouchableOpacity>
-                    <Image
-                      className={posterMovie}
-                      resizeMode="cover"
-                      resizeMethod="auto"
-                      source={{ uri: `${ulrImages}${movie.poster_path}` }}
-                    />
+                  <TouchableOpacity
+                    onPress={() => handleNavigateToDetail(movie)}
+                  >
+                    <SharedElement id={`image.${movie.id}.imageUrl`}>
+                      <Image
+                        className={posterMovie}
+                        resizeMode="cover"
+                        resizeMethod="auto"
+                        source={{ uri: `${ulrImages}${movie.poster_path}` }}
+                      />
+                    </SharedElement>
                   </TouchableOpacity>
                 </View>
               )}
